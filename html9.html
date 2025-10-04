@@ -238,6 +238,7 @@
             align-items: center;
             height: 150px; 
             margin-bottom: 20px;
+            perspective: 1000px; /* Needed for 3D flip effect */
         }
 
         .coin {
@@ -255,14 +256,18 @@
             transition: all 0.1s; 
             transform: rotateY(0deg); 
             color: #1c1c1c;
+            /* Added for smooth 3D flip */
+            transform-style: preserve-3d; 
         }
         
+        /* FIX: Updated the flipping animation to a proper 3D flip */
         .coin.flipping {
-            animation: simple-flip 0.5s linear infinite alternate;
+            animation: coin-flip 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
         }
-        @keyframes simple-flip {
-            from { opacity: 0.5; transform: scale(1.1); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes coin-flip {
+            0% { transform: scale(1) rotateY(0deg); opacity: 1; }
+            50% { transform: scale(0.8) rotateY(1800deg); opacity: 0.8; }
+            100% { transform: scale(1) rotateY(3600deg); opacity: 1; }
         }
 
         /* --- SLOTS BOXES ENHANCEMENT --- */
@@ -324,7 +329,7 @@
             box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
         }
 
-        /* --- Land Mines Styles (Simple) --- */
+        /* --- Land Mines & Russian Roulette Styles (Simple Grid/Cells) --- */
         .mine-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -366,6 +371,8 @@
             <a href="#slots">🎰 Slots</a>
             <a href="#roulette">🔴 Roulette</a>
             <a href="#poker">🃏 Poker</a>
+            <a href="#russianRoulette">🩸 Russian Roulette</a>
+            <a href="#updatesPanel">📢 Updates</a>
         </div>
     </div>
 
@@ -375,6 +382,15 @@
         </div>
     </div>
 
+    <div class="game-container" id="updatesPanel" style="max-width: 800px; margin: 25px auto;">
+        <h2>Latest Casino Updates 📢</h2>
+        <ul style="list-style-type: none; padding: 0; text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.8;">
+            <li><span style="color: var(--color-primary);">--1.4--</span> LOTS of WD-40//fixed..?//added update panel tho</li>
+            <li><span style="color: var(--color-primary);">--v1.3--</span> Ruski roulete added :O // bug WD-40 // improved mine game and ruski</li>
+            <li><span style="color: var(--color-primary);">--1.2</span> Mine game added... uh.. OH YEAH COIN GAME // WD-40</li>
+            <li><span style="color: var(--color-primary);">--1.1</span> Bug fix. With WD-40 // New design :O // thats it</li>
+        </ul>
+    </div>
     <hr>
 
     <div class="game-container" id="landMines">
@@ -543,105 +559,147 @@
 
     <hr>
 
+    <div class="game-container" id="russianRoulette">
+        <h2>Russian Roulette 🩸</h2>
+        <p style="text-align:center;">
+            Six chambers. One bullet. Choose a chamber. Survive to double your bet (2x payout).
+        </p>
+        
+        <div id="chamberGrid" class="mine-grid" style="width: 450px; grid-template-columns: repeat(6, 1fr); margin-bottom: 25px;">
+        </div>
+
+        <div class="game-controls">
+            <label for="rrBet">Bet Amount:</label>
+            <div class="bet-control-group">
+                <input type="number" id="rrBet" value="100" min="10">
+                <button class="max-bet-btn" onclick="setMaxBet('rr')">MAX</button>
+            </div>
+            <button id="rrStartButton" onclick="startRussianRoulette()">Load Revolver (Start)</button>
+        </div>
+        <div id="rrResult" class="result"></div>
+    </div>
+
+    <hr>
+
     <div class="game-container" id="loreSection">
         <h2>Casino Lore: Mark's Existential Bet 🔴</h2>
         <div style="text-align: center; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-            <p>This entire, highly questionable operation started with a <strong>whim and zero plannin</stong>. The founder, <strong>Mark</strong>, was simply trying to find a project more interesting than his own life. The concept wasn't born from genius or ambition, but from a reckless compulsion.</p>
+            <p>This entire, highly questionable operation started with a <strong>whim and zero plannin</strong>. The founder, <strong>Mark</strong>, was simply trying to find a project more interesting than his own life. The concept wasn't born from genius or ambition, but from a reckless compulsion.</p>
             <p>Mark built this casino to mirror his own life philosophy: **bet everything on Red**. He runs the code like a perpetually drunk high-roller, constantly losing faith in the algorithms, tweaking the payouts at random, and often losing more to the House than any player.</p>
-            
             <p style="color: #ff9800; font-weight: bold; margin-top: 20px;">
                 <span style="font-size: 1.2em;">🚨 Terms & Conditions (Mark's Version) 🚨</span><br>
                 We legally advise you to "follow the rules." They were drafted by <strong>Mark</strong> using only a magic eight ball, a vague memory of a children's board game, and the philosophical question, "What is gambling, really?" <strong> NOT try to exploit the code.</strong> Not because it's wrong, but because if Mark catches you, he'll replace your entire balance with a single 🥔 emoji. You have been warned.
             </p>
-            
             <div id="termsPrompt" style="margin-top: 30px; padding: 15px; border: 2px solid var(--color-secondary); border-radius: 10px;">
-                <p style="font-weight: bold; font-size: 1.1em; color: var(--color-secondary);">
-                    Do you accept Mark's Chaos Rule Terms & Conditions?
-                </p>
+                <p style="font-weight: bold; font-size: 1.1em; color: var(--color-secondary);"> Do you accept Mark's Chaos Rule Terms & Conditions? </p>
                 <button onclick="handleTermsAcceptance(true)" style="background-color: #4CAF50; color: white;">Accept Terms</button>
                 <button onclick="handleTermsAcceptance(false)" style="background-color: #f44336; margin-left: 10px; color: white;">Decline Terms</button>
             </div>
-            
             <div id="termsStatus" style="margin-top: 20px; font-weight: bold; min-height: 20px;"></div>
-
             <p style="color: var(--color-primary); font-weight: bold; font-style: italic; margin-top: 20px;">
                 Mark is the bank, the source of the chaos, and the house's worst player. Remember that the code is held together by pure despair and the faint hope that the next spin will finally land on black—for him.
             </p>
         </div>
     </div>
 
+
     <script>
+        // --- 1. BALANCE INITIALIZATION (NOW RESETS TO 1000 ON REFRESH) ---
         let balance = 1000;
         const balanceDisplay = document.getElementById('balance');
+        
+        // Load terms status from localStorage (still necessary for T&C lockout persistence)
+        let termsDeclined = localStorage.getItem('termsDeclined') === 'true'; 
+
         const suits = ['♠️', '♥️', '♦️', '♣️'];
         const cardValues = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
         const rankMap = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
         
-        let termsDeclined = false;
-
-        // --- NEW TERMS ACCEPTANCE LOGIC ---
+        // --- NEW TERMS ACCEPTANCE LOGIC (WITH PERSISTENCE CHECK) ---
         function handleTermsAcceptance(accepted) {
+            localStorage.setItem('termsDeclined', accepted ? 'false' : 'true');
+            termsDeclined = !accepted;
+            
+            checkTermsStatus(); // Apply the lock/unlock immediately
+        }
+
+        function checkTermsStatus() {
             const promptDiv = document.getElementById('termsPrompt');
             const statusDiv = document.getElementById('termsStatus');
             const allGameInputs = document.querySelectorAll('input[type="number"], select');
-            
-            promptDiv.style.display = 'none';
+            const allGameButtons = document.querySelectorAll('button:not(.max-bet-btn)');
+            const balanceDiv = document.querySelector('.balance');
 
-            if (accepted) {
-                statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ <strong>Terms Accepted:</strong> Welcome to the Chaos. Play responsibly (Mark won\'t).</span>';
-                // Everything remains active.
-            } else {
-                termsDeclined = true;
+            if (termsDeclined) {
+                promptDiv.style.display = 'none';
                 
                 // 1. Lock the balance to a potato emoji
-                const balanceDiv = document.querySelector('.balance');
                 balanceDiv.innerHTML = 
                     'Current Balance: <span style="font-size: 1.2em;">🥔</span><br><strong>CASINO LOCKED.</strong> You declined Mark\'s terms and have been judged.';
                 
                 // 2. Disable all buttons and inputs
-                document.querySelectorAll('button').forEach(btn => {
+                allGameButtons.forEach(btn => {
                     btn.disabled = true;
                 });
                 allGameInputs.forEach(input => {
                     input.disabled = true;
                 });
                 
-                // 3. Disable mine grid clicks
+                // 3. Disable mine grid clicks (if Land Mines is active)
                 document.querySelectorAll('.mine-cell').forEach(cell => cell.onclick = null);
 
                 statusDiv.innerHTML = '<span style="color: #f44336; font-size: 1.2em;">❌ <strong>DECLINED:</strong> You failed the existential test. Mark has replaced your balance with a 🥔 and locked the casino.</span>';
+            } else {
+                 // If terms are accepted, ensure UI is normal
+                promptDiv.style.display = 'none';
+                statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ <strong>Terms Accepted:</strong> Welcome to the Chaos. Play responsibly (Mark won\'t).</span>';
+                
+                // FORCE RE-ENABLE EVERYTHING (Defensive fix for persistence issues)
+                allGameInputs.forEach(input => {
+                    input.disabled = false;
+                });
+                allGameButtons.forEach(btn => {
+                    btn.disabled = false;
+                });
+                
+                // 4. Ensure balance is shown correctly and buttons are enabled based on actual balance
+                updateBalance(0); 
             }
         }
-
+        
 
         // --- Log and Balance Functions ---
-
-        function updateBalance(amount) { 
+        function updateBalance(amount) {
             if (termsDeclined) return; // Prevent any balance change if terms are declined
             
             balance += amount;
             balanceDisplay.textContent = balance.toLocaleString();
 
+            // Save balance to localStorage - ONLY FOR T&C CHECK. NOT FOR PERSISTENCE.
+            // localStorage.setItem('casinoBalance', balance); // Removed balance persistence
+
             if (balance < 10) {
-                document.querySelectorAll('button').forEach(btn => {
-                    if (!btn.classList.contains('max-bet-btn')) btn.disabled = true;
+                document.querySelectorAll('button:not(.max-bet-btn)').forEach(btn => {
+                    btn.disabled = true;
                 });
                 balanceDisplay.textContent += " (OUT OF CREDITS! Refresh to restart)";
             } else {
-                 document.getElementById('slotButton').disabled = false;
-                 document.getElementById('rouletteButton').disabled = false;
-                 document.getElementById('pokerButton').disabled = false;
-                 document.getElementById('dealButton').disabled = false;
-                 document.getElementById('coinButton').disabled = false;
-                 document.getElementById('minesStartButton').disabled = false;
+                // Re-enable all game start/spin/deal buttons if balance is sufficient
+                document.getElementById('slotButton').disabled = false;
+                document.getElementById('rouletteButton').disabled = false;
+                document.getElementById('pokerButton').disabled = false;
+                document.getElementById('dealButton').disabled = false;
+                document.getElementById('coinButton').disabled = false;
+                document.getElementById('minesStartButton').disabled = false;
+                document.getElementById('rrStartButton').disabled = false; 
+                document.getElementById('minesCashOutButton').disabled = true; // Should start disabled
             }
         }
-        
-        // --- Utility Functions ---
 
+        // --- Utility Functions ---
         function setMaxBet(gameId) {
             const betInput = document.getElementById(`${gameId}Bet`);
-            const maxBet = Math.max(10, balance); 
+            const maxBet = Math.max(10, balance);
             betInput.value = maxBet;
         }
 
@@ -652,7 +710,7 @@
             setTimeout(() => {
                 div.classList.remove('show');
                 div.classList.remove('jackpot');
-            }, 5000); 
+            }, 5000);
         }
 
         function disableButtons(disabled) {
@@ -663,8 +721,9 @@
             document.getElementById('pokerButton').disabled = disabled;
             document.getElementById('dealButton').disabled = disabled;
             document.getElementById('coinButton').disabled = disabled;
-            document.getElementById('minesStartButton').disabled = disabled; 
-            document.getElementById('minesCashOutButton').disabled = disabled; 
+            document.getElementById('minesStartButton').disabled = disabled;
+            document.getElementById('minesCashOutButton').disabled = disabled;
+            document.getElementById('rrStartButton').disabled = disabled; 
         }
 
         function createDeck() {
@@ -672,7 +731,7 @@
             for (const suit of suits) {
                 for (const value of cardValues) {
                     let rank = rankMap[value] || 10;
-                    let blackjackRank = (value === 'A') ? 11 : rank; 
+                    let blackjackRank = (value === 'A') ? 11 : rank;
                     deck.push({ value: value, suit: suit, rank: rank, blackjackRank: blackjackRank });
                 }
             }
@@ -681,625 +740,70 @@
 
         function dealCard(deck) {
             const randomIndex = Math.floor(Math.random() * deck.length);
-            return deck.splice(randomIndex, 1)[0];
-        }
-
-        // --- LAND MINES LOGIC ---
-        const MINE_GRID_SIZE = 25;
-        let mineLocations = [];
-        let revealedCount = 0;
-        let isMineGameActive = false;
-        let currentMultiplier = 1.0;
-        let currentBet = 0;
-
-        function getNextMultiplier(mines, revealed) {
-            if (revealed === 0) return 1.0; 
-            let multi = 1.0;
-            for (let i = 0; i < revealed; i++) {
-                const probSafe = (MINE_GRID_SIZE - mines - i) / (MINE_GRID_SIZE - i);
-                multi *= (1 / probSafe);
-            }
-            return parseFloat(multi.toFixed(2));
-        }
-
-        function getExpectedNextMultiplier(mines, revealed) {
-            const currentSafe = MINE_GRID_SIZE - mines - revealed;
-            const totalRemaining = MINE_GRID_SIZE - revealed;
-            
-            if (currentSafe === 0) return 0;
-            const nextMulti = totalRemaining / currentSafe;
-            return parseFloat(nextMulti.toFixed(2));
-        }
-
-        function startNewMinesGame() {
-            const betInput = document.getElementById('minesBet');
-            const resultDiv = document.getElementById('minesResult');
-            const minesStartButton = document.getElementById('minesStartButton');
-            const minesCashOutButton = document.getElementById('minesCashOutButton');
-            
-            const bet = parseInt(betInput.value);
-            const mineCount = parseInt(document.getElementById('mineCount').value);
-
-            if (bet > balance || bet <= 0) {
-                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
-                return;
-            }
-            if (isMineGameActive) return;
-
-            currentBet = bet;
-            updateBalance(-bet);
-            isMineGameActive = true;
-            revealedCount = 0;
-            currentMultiplier = 1.0;
-            disableButtons(true);
-            minesStartButton.disabled = true;
-            minesCashOutButton.disabled = true;
-            minesCashOutButton.textContent = 'Cash Out ($0)';
-            resultDiv.classList.remove('show');
-            document.getElementById('mineCount').disabled = true;
-
-            mineLocations = [];
-            const allSpots = Array.from({ length: MINE_GRID_SIZE }, (_, i) => i);
-            for (let i = 0; i < mineCount; i++) {
-                const randomIndex = Math.floor(Math.random() * allSpots.length);
-                mineLocations.push(allSpots.splice(randomIndex, 1)[0]);
-            }
-
-            const gridDiv = document.getElementById('mineGrid');
-            gridDiv.innerHTML = '';
-            for (let i = 0; i < MINE_GRID_SIZE; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'mine-cell';
-                cell.setAttribute('data-index', i);
-                cell.onclick = revealCell;
-                gridDiv.appendChild(cell);
-            }
-        }
-        
-        function revealCell(event) {
-            if (!isMineGameActive) return;
-            
-            const cell = event.currentTarget;
-            if (cell.classList.contains('safe') || cell.classList.contains('mine')) return;
-            
-            const index = parseInt(cell.getAttribute('data-index'));
-            const resultDiv = document.getElementById('minesResult');
-            const mineCount = parseInt(document.getElementById('mineCount').value);
-
-            if (mineLocations.includes(index)) {
-                cell.classList.add('mine');
-                cell.textContent = '💣';
-                endMinesGame(false, `BOOM! You hit a mine at position ${index + 1}. You lost your bet.`);
-            } else {
-                revealedCount++;
-                
-                currentMultiplier = getNextMultiplier(mineCount, revealedCount); 
-                const nextExpectedMulti = getExpectedNextMultiplier(mineCount, revealedCount);
-                
-                cell.classList.add('safe');
-                cell.textContent = `x${currentMultiplier.toFixed(2)}`; 
-                cell.onclick = null; 
-
-                const potentialWin = Math.floor(currentBet * currentMultiplier);
-                
-                document.getElementById('minesCashOutButton').disabled = false;
-                document.getElementById('minesCashOutButton').textContent = `Cash Out ($${potentialWin.toLocaleString()})`;
-
-                showResult(resultDiv, `✅ Safe! Current Winnings: <strong>${currentMultiplier.toFixed(2)}x</strong>. Next potential multiplier: x${nextExpectedMulti.toFixed(2)}.`, 'win');
-                
-                if (revealedCount === (MINE_GRID_SIZE - mineCount)) {
-                     endMinesGame(true, `PERFECT GAME! You revealed all ${revealedCount} safe tiles!`, potentialWin);
-                }
-            }
-        }
-        
-        function cashOutMines() {
-            const win = Math.floor(currentBet * currentMultiplier);
-            endMinesGame(true, `CASHED OUT at <strong>${currentMultiplier.toFixed(2)}x</strong>! You won <strong>${win.toLocaleString()}</strong> Credits!`, win);
-        }
-
-        function endMinesGame(isWin, message, finalWin = 0) {
-            isMineGameActive = false;
-            disableButtons(false);
-            document.getElementById('minesStartButton').disabled = false;
-            document.getElementById('minesCashOutButton').disabled = true;
-            document.getElementById('minesCashOutButton').textContent = 'Cash Out ($0)';
-            document.getElementById('mineCount').disabled = false;
-
-            const allCells = document.getElementById('mineGrid').children;
-            mineLocations.forEach(index => {
-                if (!allCells[index].classList.contains('mine')) {
-                    allCells[index].classList.add('mine');
-                    allCells[index].textContent = '💣';
-                }
-            });
-            
-            if (isWin) {
-                updateBalance(finalWin);
-                showResult(document.getElementById('minesResult'), message, 'win', finalWin >= 1000); 
-            } else {
-                showResult(document.getElementById('minesResult'), message, 'lose');
-            }
-            
-            document.querySelectorAll('.mine-cell').forEach(cell => cell.onclick = null);
-        }
-
-
-        // --- COIN FLIP LOGIC (REVERTED/SIMPLE) ---
-        async function playCoinFlip() {
-            const betInput = document.getElementById('coinBet');
-            const bet = parseInt(betInput.value);
-            const selection = document.getElementById('coinSelection').value;
-            const resultDiv = document.getElementById('coinFlipResult');
-            const coin = document.getElementById('coin');
-
-            if (bet > balance || bet <= 0) {
-                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
-                return;
-            }
-            disableButtons(true);
-            updateBalance(-bet);
-            
-            coin.textContent = '?';
-            coin.style.backgroundColor = '';
-            coin.classList.add('flipping');
-
-            await new Promise(resolve => setTimeout(resolve, 2000)); 
-
-            coin.classList.remove('flipping');
-            
-            // Determine result (1 in 100 chance for Edge)
-            let result;
-            const roll = Math.floor(Math.random() * 100) + 1; // 1 to 100
-            
-            if (roll === 1) {
-                result = 'Edge';
-                coin.textContent = 'E';
-                coin.style.backgroundColor = '#8B0000';
-            } else {
-                result = (Math.random() < 0.5) ? 'Heads' : 'Tails';
-                coin.textContent = (result === 'Heads') ? 'H' : 'T';
-                coin.style.backgroundColor = ''; 
-            }
-
-            let win = 0;
-            let message = '';
-            let type = 'lose';
-            let payout = 0;
-
-            if (selection === 'Edge' && result === 'Edge') {
-                payout = 50;
-            } else if ((selection === 'Heads' || selection === 'Tails') && selection === result) {
-                payout = 2;
-            }
-
-            if (payout > 0) {
-                win = bet * payout;
-                message = `🎉 The coin landed on <strong>${result}</strong>! You won <strong>${win.toLocaleString()}</strong> Credits! (${payout}x)`;
-                type = 'win';
-            } else {
-                message = `The coin landed on <strong>${result}</strong>. You lost.`;
-                type = 'lose';
-            }
-
-            updateBalance(win);
-            disableButtons(false);
-            showResult(resultDiv, message, type, payout >= 50);
-        }
-
-        // --- BLACKJACK LOGIC ---
-        let blackjackDeck = [];
-        let playerHand = [];
-        let dealerHand = [];
-        
-        function getScore(hand) {
-            let score = hand.reduce((sum, card) => sum + card.blackjackRank, 0);
-            let aces = hand.filter(card => card.value === 'A').length;
-            while (score > 21 && aces > 0) {
-                score -= 10;
-                aces--;
-            }
-            return score;
-        }
-
-        function renderHands(hideDealerSecondCard = false) {
-            const playerDiv = document.getElementById('playerHand');
-            const dealerDiv = document.getElementById('dealerHand');
-            const playerScoreSpan = document.getElementById('playerScore');
-            const dealerScoreSpan = document.getElementById('dealerScore');
-
-            playerDiv.querySelectorAll('.card').forEach(c => c.remove());
-            dealerDiv.querySelectorAll('.card').forEach(c => c.remove());
-
-            playerHand.forEach((card, index) => {
-                const pCard = document.createElement('span');
-                pCard.className = 'card';
-                pCard.style.color = (card.suit === '♥️' || card.suit === '♦️') ? 'red' : 'black';
-                pCard.textContent = `${card.value}${card.suit}`;
-                pCard.style.animationDelay = `${index * 0.2}s`; 
-                playerDiv.appendChild(pCard);
-            });
-            playerScoreSpan.textContent = getScore(playerHand);
-
-            dealerHand.forEach((card, index) => {
-                const dCard = document.createElement('span');
-                dCard.className = 'card';
-                dCard.style.animationDelay = `${index * 0.2}s`; 
-                
-                if (hideDealerSecondCard && index === 1) {
-                    dCard.classList.add('hidden');
-                    dCard.textContent = '🃏';
-                    dCard.style.color = '#555'; 
-                } else {
-                    dCard.style.color = (card.suit === '♥️' || card.suit === '♦️') ? 'red' : 'black';
-                    dCard.textContent = `${card.value}${card.suit}`;
-                }
-                dealerDiv.appendChild(dCard);
-            });
-
-            if (hideDealerSecondCard && dealerHand.length > 0) {
-                const visibleCard = dealerHand[0];
-                dealerScoreSpan.textContent = visibleCard.value === 'A' ? '11/1' : visibleCard.blackjackRank;
-            } else {
-                dealerScoreSpan.textContent = getScore(dealerHand);
-            }
-        }
-
-        async function dealBlackjack() {
-            const betInput = document.getElementById('blackjackBet');
-            const bet = parseInt(betInput.value);
-            const resultDiv = document.getElementById('blackjackResult');
-
-            if (bet > balance || bet <= 0) {
-                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
-                return;
-            }
-            disableButtons(true);
-            document.getElementById('hitButton').disabled = true;
-            document.getElementById('standButton').disabled = true;
-            updateBalance(-bet);
-
-            blackjackDeck = createDeck();
-            playerHand = [];
-            dealerHand = [];
-            resultDiv.classList.remove('show');
-            document.getElementById('playerScore').textContent = '--';
-            document.getElementById('dealerScore').textContent = '--';
-            document.getElementById('playerHand').innerHTML = ''; 
-            document.getElementById('dealerHand').innerHTML = ''; 
-
-            for (let i = 0; i < 2; i++) {
-                playerHand.push(dealCard(blackjackDeck));
-                dealerHand.push(dealCard(blackjackDeck));
-            }
-            renderHands(true);
-            
-            await new Promise(resolve => setTimeout(resolve, 500)); 
-
-            disableButtons(false); 
-            document.getElementById('dealButton').disabled = false;
-
-            if (getScore(playerHand) === 21) {
-                showResult(resultDiv, '<strong>BLACKJACK!</strong> Waiting for Dealer...', 'win');
-                await stand(true);
-            } else {
-                document.getElementById('dealButton').disabled = true; 
-                document.getElementById('hitButton').disabled = false;
-                document.getElementById('standButton').disabled = false;
-            }
-        }
-
-        async function hit() {
-            disableButtons(true);
-            document.getElementById('hitButton').disabled = true;
-            document.getElementById('standButton').disabled = true;
-            
-            playerHand.push(dealCard(blackjackDeck));
-            renderHands(true);
-            
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const score = getScore(playerHand);
-            if (score > 21) {
-                showResult(document.getElementById('blackjackResult'), `<strong>BUST!</strong> Score: ${score}. You lose.`, 'lose');
-                disableButtons(false);
-                document.getElementById('dealButton').disabled = false;
-            } else if (score === 21) {
-                showResult(document.getElementById('blackjackResult'), `<strong>21!</strong> Waiting for Dealer...`, 'win');
-                await stand(true);
-            } else {
-                disableButtons(false); 
-                document.getElementById('dealButton').disabled = true;
-                document.getElementById('hitButton').disabled = false;
-                document.getElementById('standButton').disabled = false;
-            }
-        }
-
-        async function stand(auto = false) {
-            disableButtons(true);
-            document.getElementById('hitButton').disabled = true;
-            document.getElementById('standButton').disabled = true;
-            
-            const bet = parseInt(document.getElementById('blackjackBet').value);
-            const resultDiv = document.getElementById('blackjackResult');
-            const playerScore = getScore(playerHand);
-
-            renderHands(false);
-            await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-            let dealerScore = getScore(dealerHand);
-            while (dealerScore < 17) {
-                dealerHand.push(dealCard(blackjackDeck));
-                renderHands(false);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                dealerScore = getScore(dealerHand);
-            }
-
-            let message = '';
-            let type = '';
-            let win = 0;
-
-            if (playerScore > 21) {
-                // Already lost on Bust
-            } else if (dealerScore > 21) {
-                win = bet * 2;
-                message = `Dealer <strong>BUSTED</strong> (${dealerScore})! You win ${bet} Credits! Total: ${win.toLocaleString()}`;
-                type = 'win';
-            } else if (playerScore > dealerScore) {
-                win = bet * 2;
-                message = `You win! (${playerScore} to ${dealerScore}). Total: ${win.toLocaleString()}`;
-                type = 'win';
-            } else if (playerScore < dealerScore) {
-                message = `Dealer wins (${dealerScore} to ${playerScore}). You lose.`;
-                type = 'lose';
-            } else {
-                win = bet;
-                message = `<strong>PUSH</strong> (${playerScore} to ${dealerScore}). Bet returned.`;
-                type = 'push';
-            }
-            
-            updateBalance(win); 
-            showResult(resultDiv, message, type);
-            disableButtons(false);
-            document.getElementById('dealButton').disabled = false;
-        }
-        
-        // --- SLOT MACHINE LOGIC ---
-        const weightedSymbols = [
-            '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', '🍒', 
-            '🍋', '🍋', '🍋', '🍋', '🍋', '🍋', '🍋', 
-            '🔔', '🔔', '🔔', '🔔', '🔔', 
-            '💰', '💰', '💰', 
-            '💎', '💎', 
-            '🃏' 
-        ];
-        
-        const slotPayouts = {
-            '🍒': 5, '🍋': 8, '🔔': 15, '💰': 50, '💎': 100, '🃏': 100 
-        };
-
-        function getWeightedResult() {
-             const index = Math.floor(Math.random() * weightedSymbols.length);
-             return weightedSymbols[index];
-        }
-        
-        async function playSlots() {
-            const betInput = document.getElementById('slotBet');
-            const bet = parseInt(betInput.value);
-            const resultDiv = document.getElementById('slotResult');
-            const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
-
-            if (bet > balance || bet <= 0) {
-                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
-                return;
-            }
-            disableButtons(true);
-            updateBalance(-bet);
-
-            reels.forEach(r => r.textContent = '...');
-            await new Promise(resolve => setTimeout(resolve, 1500)); 
-
-            const results = [
-                getWeightedResult(),
-                getWeightedResult(),
-                getWeightedResult()
-            ];
-
-            reels[0].textContent = results[0];
-            await new Promise(resolve => setTimeout(resolve, 200));
-            reels[1].textContent = results[1];
-            await new Promise(resolve => setTimeout(resolve, 200));
-            reels[2].textContent = results[2];
-
-            let win = 0;
-            let message = '';
-            let type = 'lose';
-            let isJackpot = false;
-
-            if (results[0] === results[1] && results[1] === results[2]) {
-                const symbol = results[0];
-                const multiplier = slotPayouts[symbol] || 0;
-                win = bet * multiplier;
-                message = `🎉 <strong>JACKPOT!</strong> THREE ${symbol}'s! You won <strong>${win.toLocaleString()}</strong> Credits! (${multiplier}x)`;
-                type = 'win';
-                if (multiplier >= 50) isJackpot = true; 
-            } 
-            else if (results[0] === results[1] || results[0] === results[2] || results[1] === results[2]) {
-                win = bet * 2;
-                message = `Double Match! You won <strong>${win.toLocaleString()}</strong> Credits! (2x)`;
-                type = 'win';
-            } else {
-                message = `You spun: ${results.join(' | ')}. You lost!`;
-                type = 'lose';
-            }
-
-            updateBalance(win);
-            showResult(resultDiv, message, type, isJackpot);
-            disableButtons(false);
-            document.getElementById('dealButton').disabled = false;
-        }
-
-        // --- ROULETTE LOGIC ---
-        const redNumbers = [1, 3, 5, 7, 9, 11];
-        const blackNumbers = [2, 4, 6, 8, 10, 12];
-
-        const rouletteSegments = [{ number: 0, color: 'GREEN', class: 'roulette-green-text' }]; 
-        for (let i = 1; i <= 12; i++) {
-            rouletteSegments.push({
-                number: i,
-                color: redNumbers.includes(i) ? 'RED' : 'BLACK',
-                class: redNumbers.includes(i) ? 'roulette-red-text' : 'roulette-black-text' 
-            });
-        }
-
-        const rouletteNumberDisplay = document.getElementById('rouletteNumberDisplay');
-
-        async function playRoulette() {
-            const betInput = document.getElementById('rouletteBet');
-            const bet = parseInt(betInput.value);
-            const selection = document.getElementById('rouletteSelection').value;
-            const resultDiv = document.getElementById('rouletteResult');
-
-            if (bet > balance || bet <= 0) {
-                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
-                return;
-            }
-            disableButtons(true);
-            updateBalance(-bet);
-
-            rouletteNumberDisplay.textContent = "Spinning...";
-            rouletteNumberDisplay.className = 'roulette-number-display';
-            
-            await new Promise(resolve => setTimeout(resolve, 3000)); 
-            
-            const resultNumberIndex = Math.floor(Math.random() * rouletteSegments.length); 
-            const finalSegment = rouletteSegments[resultNumberIndex];
-            const resultNumber = finalSegment.number;
-            const finalColor = finalSegment.color;
-
-            rouletteNumberDisplay.textContent = resultNumber;
-            rouletteNumberDisplay.classList.add(finalColor);
-            
-            let win = 0;
-            let message = '';
-            let type = 'lose';
-            let isWin = false;
-            let payout = 0; 
-            let winDescription = ''; 
-
-            switch (selection) {
-                case 'green':
-                    if (resultNumber === 0) { isWin = true; payout = 13; winDescription = 'Green (0)'; }
-                    break;
-                case 'num1':
-                    if (resultNumber === 1) { isWin = true; payout = 12; winDescription = 'Number 1'; }
-                    break;
-                case 'num7':
-                    if (resultNumber === 7) { isWin = true; payout = 12; winDescription = 'Number 7'; }
-                    break;
-                case 'col1': 
-                    if (resultNumber >= 1 && resultNumber <= 4) { isWin = true; payout = 3; winDescription = 'Column 1 (1-4)'; }
-                    break;
-                case 'col2': 
-                    if (resultNumber >= 5 && resultNumber <= 8) { isWin = true; payout = 3; winDescription = 'Column 2 (5-8)'; }
-                    break;
-                case 'col3': 
-                    if (resultNumber >= 9 && resultNumber <= 12) { isWin = true; payout = 3; winDescription = 'Column 3 (9-12)'; }
-                    break;
-                case 'red':
-                    if (redNumbers.includes(resultNumber)) { isWin = true; payout = 2; winDescription = 'Red'; }
-                    break;
-                case 'black':
-                    if (blackNumbers.includes(resultNumber)) { isWin = true; payout = 2; winDescription = 'Black'; }
-                    break;
-                case 'odd':
-                    if (resultNumber !== 0 && resultNumber % 2 !== 0) { isWin = true; payout = 2; winDescription = 'Odd'; }
-                    break;
-                case 'even':
-                    if (resultNumber !== 0 && resultNumber % 2 === 0) { isWin = true; payout = 2; winDescription = 'Even'; }
-                    break;
-                case 'low':
-                    if (resultNumber >= 1 && resultNumber <= 6) { isWin = true; payout = 2; winDescription = 'Low (1-6)'; }
-                    break;
-                case 'high':
-                    if (resultNumber >= 7 && resultNumber <= 12) { isWin = true; payout = 2; winDescription = 'High (7-12)'; }
-                    break;
-            }
-            
-            if (isWin) {
-                win = bet * payout;
-                message = `The number is <strong>${resultNumber}</strong>. 🏆 You won on ${winDescription}! Payout: <strong>${payout}x</strong>. Total: <strong>${win.toLocaleString()}</strong> Credits.`;
-                type = 'win';
-            } else {
-                 if (resultNumber === 0 && selection !== 'green') {
-                     message = `The number is <strong>0 (${finalColor})</strong>. House wins! You lost.`;
-                 } else {
-                     message = `The number is <strong>${resultNumber} (${finalColor})</strong>. You lost.`;
-                 }
-                 type = 'lose';
-            }
-
-            updateBalance(win);
-            showResult(resultDiv, message, type);
-            disableButtons(false);
-            document.getElementById('dealButton').disabled = false;
+            const card = deck.splice(randomIndex, 1)[0];
+            return card;
         }
 
         // --- POKER LOGIC ---
-        const pokerRanks = {
-            'Straight Flush': 8, 'Four of a Kind': 7, 'Full House': 6, 'Flush': 5, 'Straight': 4,
-            'Three of a Kind': 3, 'Two Pair': 2, 'Pair': 1, 'High Card': 0
-        };
+
+        function isStraight(ranks) {
+            ranks = [...new Set(ranks)].sort((a, b) => a - b);
+            if (ranks.length < 5) return false;
+            
+            // Handle standard straight 
+            for (let i = 0; i <= ranks.length - 5; i++) {
+                if (ranks[i+4] === ranks[i] + 4) return true;
+            }
+
+            // Handle A-2-3-4-5 low straight (A=14, treats as 1)
+            const lowStraight = [2, 3, 4, 5, 14];
+            if (lowStraight.every(r => ranks.includes(r))) return true;
+
+            return false;
+        }
 
         function getHandRank(hand) {
-            hand.sort((a, b) => a.rank - b.rank); 
+            const ranks = hand.map(card => card.rank).sort((a, b) => a - b);
+            const suits = hand.map(card => card.suit);
             
-            const valueCounts = {};
-            const suitCounts = {};
-            for (const card of hand) {
-                valueCounts[card.rank] = (valueCounts[card.rank] || 0) + 1;
-                suitCounts[card.suit] = (suitCounts[card.suit] || 0) + 1;
-            }
+            const rankCounts = ranks.reduce((acc, rank) => {
+                acc[rank] = (acc[rank] || 0) + 1;
+                return acc;
+            }, {});
+            
+            const suitCounts = suits.reduce((acc, suit) => {
+                acc[suit] = (acc[suit] || 0) + 1;
+                return acc;
+            }, {});
 
-            const counts = Object.values(valueCounts).sort((a, b) => b - a);
-            const distinctValues = Object.keys(valueCounts).map(Number).sort((a, b) => b - a);
-
+            const counts = Object.values(rankCounts).sort((a, b) => b - a);
             const isFlush = Object.values(suitCounts).some(count => count >= 5);
+            const isStraightHand = isStraight(ranks);
             
-            let isStraight = false;
-            if (distinctValues.length >= 5) {
-                if (distinctValues[0] - distinctValues[4] === 4) {
-                    isStraight = true;
-                } else if (distinctValues.includes(14) && distinctValues.includes(5) && distinctValues.includes(4) && distinctValues.includes(3) && distinctValues.includes(2)) {
-                    isStraight = true;
-                }
-            }
+            if (isStraightHand && isFlush) return { rank: 'Straight Flush', strength: 8, kicker: ranks[ranks.length-1] };
+            if (counts[0] === 4) return { rank: 'Four of a Kind', strength: 7, kicker: ranks.find(r => rankCounts[r] === 4) };
+            if (counts[0] === 3 && counts[1] === 2) return { rank: 'Full House', strength: 6, kicker: ranks.find(r => rankCounts[r] === 3) };
+            if (isFlush) return { rank: 'Flush', strength: 5, kicker: ranks[ranks.length-1] };
+            if (isStraightHand) return { rank: 'Straight', strength: 4, kicker: ranks[ranks.length-1] };
+            if (counts[0] === 3) return { rank: 'Three of a Kind', strength: 3, kicker: ranks.find(r => rankCounts[r] === 3) };
+            if (counts[0] === 2 && counts[1] === 2) return { rank: 'Two Pair', strength: 2, kicker: ranks.find(r => rankCounts[r] === 2) };
+            if (counts[0] === 2) return { rank: 'Pair', strength: 1, kicker: ranks.find(r => rankCounts[r] === 2) };
 
-            let rank = 'High Card';
-            if (isStraight && isFlush) rank = 'Straight Flush';
-            else if (counts[0] === 4) rank = 'Four of a Kind';
-            else if (counts[0] === 3 && counts[1] === 2) rank = 'Full House';
-            else if (isFlush) rank = 'Flush';
-            else if (isStraight) rank = 'Straight';
-            else if (counts[0] === 3) rank = 'Three of a Kind';
-            else if (counts[0] === 2 && counts[1] === 2) rank = 'Two Pair';
-            else if (counts[0] === 2) rank = 'Pair';
-
-            return { rank, value: pokerRanks[rank], handValues: distinctValues };
+            return { rank: 'High Card', strength: 0, kicker: ranks[ranks.length-1] };
         }
 
-        function compareHands(playerHandRank, dealerHandRank) {
-            if (playerHandRank.value > dealerHandRank.value) return 1;
-            if (playerHandRank.value < dealerHandRank.value) return -1;
+        function compareHands(playerRank, dealerRank) {
+            if (playerRank.strength > dealerRank.strength) return 1; // Player wins
+            if (playerRank.strength < dealerRank.strength) return -1; // Dealer wins
             
-            for (let i = 0; i < playerHandRank.handValues.length; i++) {
-                if (playerHandRank.handValues[i] > dealerHandRank.handValues[i]) return 1;
-                if (playerHandRank.handValues[i] < dealerHandRank.handValues[i]) return -1;
-            }
+            // Tie breaker logic (simplified: compare the primary kicker)
+            if (playerRank.kicker > dealerRank.kicker) return 1;
+            if (playerRank.kicker < dealerRank.kicker) return -1;
 
-            return 0;
+            return 0; // Push (Full Tie)
         }
 
+        // --- POKER GAME (FIXED) ---
         async function playPoker() {
             const betInput = document.getElementById('pokerBet');
             const bet = parseInt(betInput.value);
@@ -1352,16 +856,26 @@
             let message = '';
             let type = 'lose';
 
+            // Payouts are for total return multiplier (2x total = 1:1 profit)
             const payoutTable = {
                 'Pair': 2, 'Two Pair': 3, 'Three of a Kind': 4, 'Straight': 5, 'Flush': 6, 
                 'Full House': 8, 'Four of a Kind': 10, 'Straight Flush': 20
             };
 
-            const playerPayout = payoutTable[playerRank.rank] || 1; 
+            const premiumPayout = payoutTable[playerRank.rank];
 
+            // --- POKER PAYOUT LOGIC FIX ---
             if (result === 1) { 
-                win = bet * playerPayout;
-                message = `✅ You win! Your <strong>${playerRank.rank}</strong> beat the Dealer's ${dealerRank.rank}. You won <strong>${win.toLocaleString()}</strong> Credits!`;
+                if (premiumPayout) {
+                    // Premium Payout: Multiplier * Bet
+                    win = bet * premiumPayout;
+                    const profit = win - bet;
+                    message = `✅ You win! Your <strong>${playerRank.rank}</strong> beat the Dealer's ${dealerRank.rank}. Payout: ${premiumPayout}x. You won <strong>${profit.toLocaleString()}</strong> Credits! Total: ${win.toLocaleString()}`;
+                } else {
+                    // Standard Win (e.g., High Card beats High Card): 1:1 profit (2x total return)
+                    win = bet * 2;
+                    message = `✅ You win! Your <strong>${playerRank.rank}</strong> beat the Dealer's ${dealerRank.rank}. You won <strong>${bet.toLocaleString()}</strong> Credits! Total: ${win.toLocaleString()} Credits.`;
+                }
                 type = 'win';
             } else if (result === 0) { 
                 win = bet;
@@ -1375,11 +889,655 @@
             updateBalance(win);
             showResult(resultDiv, message, type);
             disableButtons(false);
-            document.getElementById('dealButton').disabled = false;
+            document.getElementById('pokerButton').disabled = false;
+        }
+
+        // --- BLACKJACK LOGIC ---
+        let bjDeck, playerHandBJ, dealerHandBJ;
+
+        function getCardValue(card) {
+            if (card.value === 'A') return 11;
+            if (['K', 'Q', 'J'].includes(card.value)) return 10;
+            return parseInt(card.value);
+        }
+
+        function calculateScore(hand, hideSecond = false) {
+            let score = 0;
+            let aces = 0;
+            
+            // Start from the second card if hiding the second card
+            const startIndex = hideSecond ? 1 : 0;
+
+            for (let i = startIndex; i < hand.length; i++) {
+                const card = hand[i];
+                if (card.value === 'A') {
+                    aces++;
+                }
+                score += getCardValue(card);
+            }
+
+            while (score > 21 && aces > 0) {
+                score -= 10;
+                aces--;
+            }
+            return score;
+        }
+
+        function renderHands(hideDealerSecond = false) {
+            const playerDiv = document.getElementById('playerHand');
+            const dealerDiv = document.getElementById('dealerHand');
+            const playerScoreSpan = document.getElementById('playerScore');
+            const dealerScoreSpan = document.getElementById('dealerScore');
+
+            // Clear previous cards
+            playerDiv.innerHTML = '';
+            dealerDiv.innerHTML = '';
+
+            // Render Player Hand
+            playerHandBJ.forEach((card, index) => {
+                const pCard = document.createElement('span');
+                pCard.className = 'card';
+                pCard.textContent = `${card.value}${card.suit}`;
+                pCard.style.animationDelay = `${index * 0.2}s`;
+                playerDiv.appendChild(pCard);
+            });
+            playerScoreSpan.textContent = calculateScore(playerHandBJ);
+
+            // Render Dealer Hand
+            dealerHandBJ.forEach((card, index) => {
+                const dCard = document.createElement('span');
+                dCard.className = 'card';
+                if (hideDealerSecond && index === 1) {
+                    dCard.classList.add('hidden');
+                    dCard.textContent = '🂠';
+                } else {
+                    dCard.textContent = `${card.value}${card.suit}`;
+                }
+                dCard.style.animationDelay = `${index * 0.2}s`;
+                dealerDiv.appendChild(dCard);
+            });
+
+            // Calculate and display dealer score (only based on visible card if hidden)
+            dealerScoreSpan.textContent = calculateScore(dealerHandBJ, hideDealerSecond);
+        }
+
+        async function dealBlackjack() {
+            const betInput = document.getElementById('blackjackBet');
+            const bet = parseInt(betInput.value);
+            const resultDiv = document.getElementById('blackjackResult');
+
+            if (bet > balance || bet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+
+            disableButtons(true);
+            document.getElementById('dealButton').disabled = true;
+            updateBalance(-bet);
+            
+            bjDeck = createDeck();
+            playerHandBJ = [];
+            dealerHandBJ = [];
+
+            // Deal two cards each
+            playerHandBJ.push(dealCard(bjDeck));
+            dealerHandBJ.push(dealCard(bjDeck));
+            playerHandBJ.push(dealCard(bjDeck));
+            dealerHandBJ.push(dealCard(bjDeck));
+            
+            renderHands(true); 
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            const playerScore = calculateScore(playerHandBJ);
+            const dealerScore = calculateScore(dealerHandBJ);
+            
+            if (playerScore === 21 && dealerScore !== 21) {
+                const win = bet * 2.5; // Blackjack pays 3:2
+                updateBalance(win + bet); 
+                showResult(resultDiv, `♠️ **BLACKJACK!** You win 3:2! You won **${win.toLocaleString()}** Credits!`, 'win');
+                disableButtons(false);
+            } else if (playerScore === 21 && dealerScore === 21) {
+                updateBalance(bet); 
+                showResult(resultDiv, '🤝 Both you and the Dealer have Blackjack! **PUSH**. Bet returned.', 'push');
+                disableButtons(false);
+            } else if (dealerScore === 21) {
+                showResult(resultDiv, 'Dealer has **BLACKJACK!** You lose.', 'lose');
+                disableButtons(false);
+            } else {
+                document.getElementById('hitButton').disabled = false;
+                document.getElementById('standButton').disabled = false;
+            }
+        }
+
+        function hit() {
+            playerHandBJ.push(dealCard(bjDeck));
+            renderHands(true);
+            const playerScore = calculateScore(playerHandBJ);
+
+            if (playerScore > 21) {
+                document.getElementById('hitButton').disabled = true;
+                document.getElementById('standButton').disabled = true;
+                stand(true); // Auto-stand/lose
+            }
+        }
+
+        async function stand(isBust = false) {
+            document.getElementById('hitButton').disabled = true;
+            document.getElementById('standButton').disabled = true;
+            
+            const bet = parseInt(document.getElementById('blackjackBet').value);
+            const resultDiv = document.getElementById('blackjackResult');
+
+            if (isBust) {
+                showResult(resultDiv, '💥 **BUST!** Your score is over 21. You lose.', 'lose');
+                disableButtons(false);
+                return;
+            }
+
+            // Reveal dealer's hand
+            renderHands(false);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            let dealerScore = calculateScore(dealerHandBJ);
+            const playerScore = calculateScore(playerHandBJ);
+
+            while (dealerScore < 17) {
+                dealerHandBJ.push(dealCard(bjDeck));
+                renderHands(false);
+                dealerScore = calculateScore(dealerHandBJ);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            let win = 0;
+            let message = '';
+            let type = 'lose';
+
+            if (dealerScore > 21) {
+                win = bet * 2;
+                message = `🎉 Dealer **BUSTS!** You win! You won **${bet.toLocaleString()}** Credits!`;
+                type = 'win';
+            } else if (playerScore > dealerScore) {
+                win = bet * 2;
+                message = `✅ You win! Your ${playerScore} beat the Dealer's ${dealerScore}. You won **${bet.toLocaleString()}** Credits!`;
+                type = 'win';
+            } else if (playerScore < dealerScore) {
+                message = `Dealer wins! Your ${playerScore} was beaten by the Dealer's ${dealerScore}. You lose.`;
+                type = 'lose';
+            } else {
+                win = bet;
+                message = `🤝 It's a **PUSH**! Both scores are ${playerScore}. Bet returned.`;
+                type = 'push';
+            }
+
+            updateBalance(win);
+            showResult(resultDiv, message, type);
+            disableButtons(false);
+        }
+
+        // --- SLOTS LOGIC ---
+        const slotSymbols = ['🍒', '🍋', '🔔', '7️⃣'];
+        const slotPayouts = {
+            '7️⃣': 10, // Jackpot
+            '🔔': 5,
+            '🍒': 3,
+            '🍋': 2,
+        };
+
+        async function playSlots() {
+            const betInput = document.getElementById('slotBet');
+            const bet = parseInt(betInput.value);
+            const resultDiv = document.getElementById('slotResult');
+            
+            if (bet > balance || bet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+
+            disableButtons(true);
+            updateBalance(-bet);
+
+            const reels = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3'),
+            ];
+
+            // Animation (Simplified)
+            let finalResults = [];
+            for (let i = 0; i < 3; i++) {
+                reels[i].classList.add('flipping');
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Stop reel
+                const result = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+                finalResults.push(result);
+                reels[i].textContent = result;
+                reels[i].classList.remove('flipping');
+            }
+
+            // Determine Payout
+            const isTripleMatch = finalResults[0] === finalResults[1] && finalResults[1] === finalResults[2];
+            
+            // Check for a double match to provide a different losing message
+            const isDoubleMatch = 
+                (finalResults[0] === finalResults[1] && finalResults[1] !== finalResults[2]) || 
+                (finalResults[1] === finalResults[2] && finalResults[0] !== finalResults[1]) ||
+                (finalResults[0] === finalResults[2] && finalResults[0] !== finalResults[1]); 
+
+            let win = 0;
+            let message = '';
+            let type = 'lose';
+            
+            if (isTripleMatch) {
+                const symbol = finalResults[0];
+                const multiplier = slotPayouts[symbol] || 1;
+                win = bet * multiplier;
+                const profit = win - bet;
+                message = `🎉 **JACKPOT!** Triple ${symbol}! Payout: ${multiplier}x. You won **${profit.toLocaleString()}** Credits!`;
+                type = 'win';
+            } else if (isDoubleMatch) {
+                // Better messaging for a near-miss
+                message = `Close one! You hit a double match, but need three to win. Try again!`;
+                type = 'lose'; 
+            } else {
+                message = `Spin lost. Try again!`;
+                type = 'lose';
+            }
+
+            updateBalance(win);
+            showResult(resultDiv, message, type, isTripleMatch && win >= 1000);
+            disableButtons(false);
+        }
+
+
+        // --- ROULETTE LOGIC ---
+        const redNumbers = [1, 3, 5, 7, 9, 11];
+        const blackNumbers = [2, 4, 6, 8, 10, 12];
+
+        async function playRoulette() {
+            const betInput = document.getElementById('rouletteBet');
+            const bet = parseInt(betInput.value);
+            const selection = document.getElementById('rouletteSelection').value;
+            const resultDiv = document.getElementById('rouletteResult');
+            const numberDisplay = document.getElementById('rouletteNumberDisplay');
+
+            if (bet > balance || bet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+
+            disableButtons(true);
+            updateBalance(-bet);
+            
+            // Animation setup
+            numberDisplay.textContent = '...';
+            numberDisplay.className = 'roulette-number-display';
+
+            // Simulate spinning
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Spin result (0 to 12)
+            const resultNumber = Math.floor(Math.random() * 13); 
+
+            // Update display
+            numberDisplay.textContent = resultNumber;
+            if (resultNumber === 0) {
+                numberDisplay.classList.add('GREEN');
+            } else if (redNumbers.includes(resultNumber)) {
+                numberDisplay.classList.add('RED');
+            } else {
+                numberDisplay.classList.add('BLACK');
+            }
+
+            let win = 0;
+            let message = '';
+            let type = 'lose';
+            let multiplier = 0;
+
+            // Determine win condition
+            if (selection === 'green' && resultNumber === 0) {
+                multiplier = 13; // Green (0) pays 13x total (12:1 profit)
+            } else if (selection === 'red' && redNumbers.includes(resultNumber)) {
+                multiplier = 2; // Red pays 2x total (1:1 profit)
+            } else if (selection === 'black' && blackNumbers.includes(resultNumber)) {
+                multiplier = 2; // Black pays 2x total (1:1 profit)
+            } else if (selection === 'odd' && resultNumber !== 0 && resultNumber % 2 !== 0) {
+                multiplier = 2; // Odd pays 2x total (1:1 profit)
+            } else if (selection === 'even' && resultNumber !== 0 && resultNumber % 2 === 0) {
+                multiplier = 2; // Even pays 2x total (1:1 profit)
+            } else if (selection === 'low' && resultNumber >= 1 && resultNumber <= 6) {
+                multiplier = 2; // Low (1-6) pays 2x total (1:1 profit)
+            } else if (selection === 'high' && resultNumber >= 7 && resultNumber <= 12) {
+                multiplier = 2; // High (7-12) pays 2x total (1:1 profit)
+            } else if (selection.startsWith('num') && resultNumber === parseInt(selection.slice(3))) {
+                multiplier = 13; // Single number pays 13x total (12:1 profit)
+            } else if (selection.startsWith('col')) {
+                const col = parseInt(selection.slice(3));
+                const start = (col - 1) * 4 + 1;
+                const end = col * 4;
+                if (resultNumber >= start && resultNumber <= end) {
+                    multiplier = 4; // Column pays 4x total (3:1 profit)
+                }
+            }
+
+
+            if (multiplier > 0) {
+                win = bet * multiplier;
+                const profit = win - bet;
+                message = `🎉 **${resultNumber}**! Your **${selection}** bet won! Payout: ${multiplier}x. You won **${profit.toLocaleString()}** Credits!`;
+                type = 'win';
+            } else {
+                message = `💔 **${resultNumber}**! Your **${selection}** bet lost.`;
+            }
+            
+            updateBalance(win);
+            showResult(resultDiv, message, type, multiplier >= 10);
+            disableButtons(false);
+        }
+
+        // --- LAND MINES LOGIC ---
+        const mineMultipliers = {
+            3: [1.33, 2.00, 3.00, 4.50, 6.75, 10.13, 15.19, 22.78, 34.17, 51.26, 76.89, 115.34, 173.01, 259.52, 389.28, 583.92, 875.88, 1313.82, 1970.73, 2956.10, 4434.15, 6651.22],
+            5: [1.44, 2.39, 3.98, 6.63, 11.05, 18.42, 30.70, 51.17, 85.28, 142.13, 236.88, 394.80, 658.00, 1096.67, 1827.78, 3046.30, 5077.17, 8461.95, 14103.25, 23505.42, 39175.70, 65292.83],
+            8: [1.74, 3.05, 5.34, 9.35, 16.36, 28.63, 50.11, 87.70, 153.48, 268.59, 469.96, 822.43, 1439.25, 2518.69, 4407.71, 7713.49, 13500.59, 23626.04, 41345.57, 72354.74, 126620.80, 221586.40]
+        };
+        const maxCells = 25; // 5x5 grid
+        let gameActive = false;
+        let mineLocations = [];
+        let revealedCount = 0;
+        let currentMultiplier = 0;
+        let minesBet = 0;
+        let numMines = 3;
+
+
+        function startNewMinesGame() {
+            const betInput = document.getElementById('minesBet');
+            minesBet = parseInt(betInput.value);
+            numMines = parseInt(document.getElementById('mineCount').value);
+            const resultDiv = document.getElementById('minesResult');
+
+            if (minesBet > balance || minesBet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+            if (gameActive) return;
+
+            disableButtons(true);
+            document.getElementById('minesCashOutButton').disabled = true;
+            document.getElementById('minesStartButton').disabled = true;
+            updateBalance(-minesBet);
+
+            gameActive = true;
+            revealedCount = 0;
+            currentMultiplier = 0;
+            mineLocations = [];
+
+            // Place mines
+            while (mineLocations.length < numMines) {
+                const location = Math.floor(Math.random() * maxCells);
+                if (!mineLocations.includes(location)) {
+                    mineLocations.push(location);
+                }
+            }
+
+            // Render grid
+            const mineGrid = document.getElementById('mineGrid');
+            mineGrid.innerHTML = '';
+            for (let i = 0; i < maxCells; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'mine-cell';
+                cell.id = `mineCell-${i}`;
+                cell.onclick = () => revealCell(i);
+                mineGrid.appendChild(cell);
+            }
+            showResult(resultDiv, `Game Started! ${numMines} Mines hidden.`, 'push');
+        }
+
+        function revealCell(index) {
+            if (!gameActive) return;
+            const cell = document.getElementById(`mineCell-${index}`);
+            if (cell.classList.contains('safe') || cell.classList.contains('mine')) return;
+
+            cell.onclick = null;
+
+            if (mineLocations.includes(index)) {
+                // Hit a mine
+                cell.classList.add('mine');
+                cell.textContent = '💣';
+                endMinesGame(false, `💥 You hit a mine! You lose ${minesBet.toLocaleString()} Credits.`, index);
+            } else {
+                // Safe click
+                revealedCount++;
+                currentMultiplier = mineMultipliers[numMines][revealedCount - 1] || 1;
+                const nextMultiplier = mineMultipliers[numMines][revealedCount] || 'MAX';
+                const potentialWin = minesBet * currentMultiplier;
+
+                cell.classList.add('safe');
+                cell.textContent = `x${currentMultiplier.toFixed(2)}`;
+
+                document.getElementById('minesCashOutButton').disabled = false;
+                document.getElementById('minesCashOutButton').textContent = `Cash Out ($${potentialWin.toLocaleString()})`;
+                
+                // End game if all safe cells are revealed
+                if (revealedCount >= maxCells - numMines) {
+                    endMinesGame(true, `🎉 **MAX WIN!** You cleared all cells for a ${currentMultiplier.toFixed(2)}x win!`, index);
+                }
+            }
+        }
+
+        function cashOutMines() {
+            if (!gameActive) return;
+            endMinesGame(true, `You cashed out at **${currentMultiplier.toFixed(2)}x**! You won **${(minesBet * currentMultiplier - minesBet).toLocaleString()}** Credits!`);
+        }
+
+        function endMinesGame(isWin, message, hitIndex = -1) {
+            gameActive = false;
+            const finalWin = isWin ? minesBet * currentMultiplier : 0;
+            const resultDiv = document.getElementById('minesResult');
+
+            // Reveal all mines/chambers
+            for (let i = 0; i < maxCells; i++) {
+                const cell = document.getElementById(`mineCell-${i}`);
+                cell.onclick = null;
+                if (mineLocations.includes(i) && i !== hitIndex) {
+                    cell.classList.add('mine');
+                    cell.textContent = '💣';
+                }
+            }
+
+            // --- MINES JACKPOT LOGIC FIX ---
+            if (isWin) {
+                updateBalance(finalWin);
+                // Trigger jackpot flash if the final multiplier is 5.0x or higher
+                showResult(resultDiv, message, 'win', currentMultiplier >= 5.0); 
+            } else {
+                showResult(resultDiv, message, 'lose');
+            }
+
+            disableButtons(false);
+            document.getElementById('minesCashOutButton').textContent = `Cash Out ($0)`;
+            document.getElementById('minesCashOutButton').disabled = true;
+        }
+
+
+        // --- COIN FLIP LOGIC (FIXED) ---
+        async function playCoinFlip() {
+            const betInput = document.getElementById('coinBet');
+            const bet = parseInt(betInput.value);
+            const selection = document.getElementById('coinSelection').value;
+            const resultDiv = document.getElementById('coinFlipResult');
+            const coinDiv = document.getElementById('coin');
+
+            if (bet > balance || bet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+
+            disableButtons(true);
+            updateBalance(-bet);
+            
+            // Animation setup
+            coinDiv.textContent = '?';
+            
+            // FIX 1: Add the 'flipping' class to start the visual animation
+            coinDiv.classList.add('flipping'); 
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // FIX 2: Remove the 'flipping' class after the simulated flip time
+            coinDiv.classList.remove('flipping'); 
+
+            // Result
+            let result = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            let isEdge = Math.random() < 0.01; // 1 in 100
+
+            let win = 0;
+            let message = '';
+            let type = 'lose';
+            let multiplier = 0;
+            let isJackpot = false;
+
+            if (isEdge) {
+                result = 'EDGE';
+                coinDiv.textContent = '📐';
+                multiplier = 50;
+            } else {
+                coinDiv.textContent = result === 'Heads' ? 'HEADS' : 'TAILS';
+                multiplier = 2; // Standard payout
+            }
+
+            if ((selection === result) || (selection === 'Heads' && result === 'HEADS') || (selection === 'Tails' && result === 'TAILS')) {
+                win = bet * multiplier;
+                const profit = win - bet;
+                
+                if (result === 'EDGE') {
+                    message = `🤯 **UNBELIEVABLE!** The coin landed on the **EDGE**! Payout: 50x. You won **${profit.toLocaleString()}** Credits!`;
+                    isJackpot = true;
+                } else {
+                    message = `🎉 **${result}**! You win ${multiplier}x! You won **${profit.toLocaleString()}** Credits!`;
+                }
+                type = 'win';
+            } else {
+                message = `💔 **${result === 'EDGE' ? 'EDGE' : result}**! You bet on ${selection}. You lost.`;
+            }
+
+            updateBalance(win);
+            showResult(resultDiv, message, type, isJackpot);
+            disableButtons(false);
+        }
+
+
+        // --- RUSSIAN ROULETTE LOGIC ---
+        let rrGameActive = false;
+        let bulletChamber = -1;
+        let rrBet = 0;
+
+        // FIX: Removed "Chamber X" text from cells when loading
+        function startRussianRoulette() {
+            const betInput = document.getElementById('rrBet');
+            rrBet = parseInt(betInput.value);
+            const resultDiv = document.getElementById('rrResult');
+
+            if (rrBet > balance || rrBet <= 0) {
+                showResult(resultDiv, 'Invalid bet or insufficient balance!', 'lose');
+                return;
+            }
+            if (rrGameActive) return;
+
+            disableButtons(true);
+            document.getElementById('rrStartButton').disabled = true;
+            updateBalance(-rrBet);
+
+            rrGameActive = true;
+            bulletChamber = Math.floor(Math.random() * 6); // 0 to 5
+
+            // Render chamber grid (6 chambers)
+            const chamberGrid = document.getElementById('chamberGrid');
+            chamberGrid.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'mine-cell'; // Reusing mine-cell style
+                cell.id = `rrChamber-${i}`;
+                // cell.textContent = `${i + 1}`; // Removed per user request
+                cell.onclick = () => pullTrigger(i);
+                chamberGrid.appendChild(cell);
+            }
+            showResult(resultDiv, `Revolver loaded. ${6 - 1} empty chambers. Choose wisely.`, 'push');
+        }
+
+        // FIX: Corrected the winning message to show profit, not total return
+        function pullTrigger(chosenIndex) {
+            if (!rrGameActive) return;
+            rrGameActive = false; // Lock game while determining result
+
+            document.querySelectorAll('#chamberGrid .mine-cell').forEach(cell => cell.onclick = null);
+
+            const chamber = document.getElementById(`rrChamber-${chosenIndex}`);
+            chamber.textContent = '⏳ ...';
+
+            setTimeout(() => {
+                let win = 0;
+                let message = '';
+
+                if (chosenIndex === bulletChamber) {
+                    // Loss (Bullet)
+                    chamber.textContent = '💥';
+                    chamber.classList.add('mine');
+                    message = `💀 **BANG!** Chamber ${chosenIndex + 1} was the bullet. You lost ${rrBet.toLocaleString()} Credits.`;
+                    
+                    // Reveal the other safe chambers
+                    document.querySelectorAll('#chamberGrid .mine-cell').forEach((cell, index) => {
+                         cell.onclick = null;
+                         if (index !== bulletChamber) {
+                             cell.classList.add('safe');
+                             cell.textContent = 'Empty';
+                         }
+                    });
+
+                    endRRGame(false, message);
+                } else {
+                    // Win (Survival)
+                    chamber.textContent = 'Empty';
+                    chamber.classList.remove('push');
+                    chamber.classList.add('safe');
+                    
+                    win = rrBet * 2; // Total return (Bet + Profit)
+                    const profit = rrBet;
+                    
+                    message = `🍾 **CLICK!** Chamber ${chosenIndex + 1} was empty! You survived and doubled your bet! You won <strong>${profit.toLocaleString()}</strong> Credits! Total Return: ${win.toLocaleString()} Credits.`;
+                    
+                    // Reveal the bullet chamber(s)
+                    document.querySelectorAll('#chamberGrid .mine-cell').forEach((cell, index) => {
+                         cell.onclick = null;
+                         if (index === bulletChamber) {
+                             cell.classList.add('mine');
+                             cell.textContent = '💥';
+                         }
+                    });
+
+                    endRRGame(true, message, win);
+                }
+            }, 1000);
+        }
+
+        function endRRGame(isWin, message, win = 0) {
+            const resultDiv = document.getElementById('rrResult');
+            const type = isWin ? 'win' : 'lose';
+
+            if (isWin) {
+                updateBalance(win);
+            }
+            
+            showResult(resultDiv, message, type);
+            disableButtons(false);
+            document.getElementById('rrStartButton').disabled = false;
         }
 
         // Initial setup
-        updateBalance(0); 
+        checkTermsStatus(); // Apply lock if previously declined
+        updateBalance(0); // Update balance display and check for low balance state
     </script>
 
 </body>
