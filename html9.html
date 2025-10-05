@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mark's Casino - High Roller</title>
+    <title>Mark's Casino</title>
     <style>
         /* --- General Styling --- */
         :root {
@@ -357,6 +357,16 @@
 
         .mine-cell.safe { background-color: #12803c; color: white; cursor: default; }
         .mine-cell.mine { background-color: #8B0000; color: white; cursor: default; }
+
+        /* --- SECRET MESSAGE STYLING --- */
+        .secret-message {
+            position: fixed;
+            bottom: 5px;
+            left: 5px;
+            font-size: 8px; 
+            color: #f0000f; /* Low contrast with the dark background */
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
@@ -385,10 +395,11 @@
     <div class="game-container" id="updatesPanel" style="max-width: 800px; margin: 25px auto;">
         <h2>Latest Casino Updates 📢</h2>
         <ul style="list-style-type: none; padding: 0; text-align: left; max-width: 500px; margin: 0 auto; line-height: 1.8;">
-            <li><span style="color: var(--color-primary);">--1.4--</span> LOTS of WD-40//fixed..?//added update panel tho</li>
-            <li><span style="color: var(--color-primary);">--v1.3--</span> Ruski roulete added :O // bug WD-40 // improved mine game and ruski</li>
-            <li><span style="color: var(--color-primary);">--1.2</span> Mine game added... uh.. OH YEAH COIN GAME // WD-40</li>
-            <li><span style="color: var(--color-primary);">--1.1</span> Bug fix. With WD-40 // New design :O // thats it</li>
+            <li><span style="color: var(--color-primary);">--v1.5--</span>Secret message :O // no new games..? // fixed the update panel bc i was sleepy asf</li>
+            <li><span style="color: var(--color-primary);">--v1.4--</span>LOTS of WD-40 // fixed..? // added update panel tho</li>
+            <li><span style="color: var(--color-primary);">--v1.3--</span>Ruski roulete added :O // bug WD-40 // improved mine game and ruski</li>
+            <li><span style="color: var(--color-primary);">--v1.2--</span>Mine game added.. uh.. OH YEAH AND COIN GAME // WD-40</li>
+            <li><span style="color: var(--color-primary);">--v1.1--</span>Bug fix. With WD-40 // New design :O // thats it.</li>
         </ul>
     </div>
     <hr>
@@ -601,7 +612,8 @@
             </p>
         </div>
     </div>
-
+    
+    <div class="secret-message">if you read this you are gay</div>
 
     <script>
         // --- 1. BALANCE INITIALIZATION (NOW RESETS TO 1000 ON REFRESH) ---
@@ -674,9 +686,6 @@
             
             balance += amount;
             balanceDisplay.textContent = balance.toLocaleString();
-
-            // Save balance to localStorage - ONLY FOR T&C CHECK. NOT FOR PERSISTENCE.
-            // localStorage.setItem('casinoBalance', balance); // Removed balance persistence
 
             if (balance < 10) {
                 document.querySelectorAll('button:not(.max-bet-btn)').forEach(btn => {
